@@ -1,0 +1,92 @@
+
+/* ══════════════════════════════════════════════════
+   SCREENSHOT PROTECTION
+   The <dialog> backdrop renders on a separate GPU
+   compositor layer. On most Android Chrome builds,
+   screenshot and screen-record tools capture this
+   layer as solid black, obscuring all content.
+   The dialog itself is invisible — only the backdrop
+   is active, covering the full viewport.
+══════════════════════════════════════════════════ */
+#ss-shield {
+  position: fixed;
+  inset: 0;
+  width: 0;
+  height: 0;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  pointer-events: none;
+}
+
+#ss-shield::backdrop {
+  background: #000000;
+  opacity: 1;
+  /* Force GPU compositing layer — key to the screenshot-black effect */
+  -webkit-backdrop-filter: blur(0px);
+  backdrop-filter: blur(0px);
+  will-change: opacity;
+}
+
+/* ══════════════════════════════════════════════════
+   SCREENSHOT WATERMARK OVERLAY
+   Always present at near-invisible opacity during use.
+   Captured clearly in any screenshot or screen record.
+   Pattern: diagonal repeating name + timestamp tiles.
+══════════════════════════════════════════════════ */
+#nx-watermark {
+  position: fixed;
+  inset: 0;
+  z-index: 9990;
+  pointer-events: none;
+  opacity: 0.045;
+  will-change: opacity;
+  display: none;
+}
+#nx-watermark.active {
+  display: block;
+}
+#nx-watermark svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ══════════════════════════════════════════════════
+   MESSAGE WATERMARK
+   Shows viewer name + time on every message bubble.
+   Nearly invisible during normal use (opacity 0.045)
+   but clearly captured in screenshots.
+   Uses mix-blend-mode so it works on both light/dark
+   bubbles without changing the bubble color.
+══════════════════════════════════════════════════ */
+.msg-bubble {
+  position: relative;
+  overflow: hidden;
+}
+
+.msg-watermark {
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  font-size: 9px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+
+  /* Nearly invisible in normal use */
+  opacity: 0.045;
+  color: #ffffff;
+  mix-blend-mode: difference;
+
+  /* Force GPU layer — ensures it's captured in screenshots
+     even when the dialog backdrop is active */
+  will-change: opacity;
+  transform: translateZ(0);
+  z-index: 10;
+}

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>NEXUS PWA Diagnostics</title>
+<style>
+  body { font-family: monospace; background: #0d1a1a; color: #cce8e6; padding: 20px; font-size: 14px; }
+  h2   { color: #4ecdc4; letter-spacing: 3px; margin-bottom: 20px; }
+  .row { display: flex; align-items: flex-start; gap: 12px; margin: 10px 0; padding: 10px 14px; border-radius: 8px; background: rgba(78,205,196,0.05); border: 1px solid rgba(78,205,196,0.1); }
+  .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .label { color: #4ecdc4; font-weight: bold; font-size: 11px; letter-spacing: 1px; margin-bottom: 3px; }
+  .val  { color: #aacfcc; font-size: 12px; word-break: break-all; }
+  .pass { border-color: rgba(81,207,102,0.3); background: rgba(81,207,102,0.05); }
+  .fail { border-color: rgba(255,80,80,0.3);  background: rgba(255,80,80,0.05); }
+  .warn { border-color: rgba(252,196,25,0.3); background: rgba(252,196,25,0.05); }
+  button { margin-top: 20px; padding: 12px 24px; background: #4ecdc4; color: #0d1a1a; border: none; border-radius: 8px; font-family: monospace; font-weight: bold; font-size: 13px; letter-spacing: 2px; cursor: pointer; }
+  #prompt-result { margin-top: 12px; padding: 10px; border-radius: 8px; background: rgba(78,205,196,0.1); display: none; }
+  #log { margin-top: 20px; font-size: 11px; color: #6a9a96; white-space: pre-wrap; }
+</style>
+</head>
+<body>
+<h2>NEXUS PWA DIAGNOSTICS</h2>
+<div id="results">Checking…</div>
+<button onclick="triggerInstall()" id="install-btn" style="display:none">TAP TO INSTALL NOW</button>
+<div id="prompt-result"></div>
+<div id="log"></div>
+
+<script>
+const BASE = 'https://debguin1-alt.github.io/Nexuschat';
+let _deferred = null;
+const log = [];
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _deferred = e;
+  addRow('beforeinstallprompt', '✅ Event fired — app is installable!', 'pass');
+  document.getElementById('install-btn').style.display = 'block';
+  logLine('beforeinstallprompt fired ✅');
+});
+
+window.addEventListener('appinstalled', () => {
+  addRow('appinstalled', '✅ App installed successfully!', 'pass');
+});
+
+function logLine(msg) {
+  log.push(new Date().toISOString().slice(11,19) + ' ' + msg);
+  document.getElementById('log').textContent = log.join('\n');
+}
+
+function addRow(label, val, cls='') {
+  const icon = cls === 'pass' ? '✅' : cls === 'fail' ? '❌' : '⚠️';
+  const div = document.createElement('div');
+  div.className = 'row ' + cls;
+  div.innerHTML = `<div class="icon">${icon}</div><div><div class="label">${label}</div><div class="val">${val}</div></div>`;
+  document.getElementById('results').appendChild(div);
+}
+
+async function check() {
+  document.getElementById('results').innerHTML = '';
+
+  // 1. HTTPS
+  const isHttps = location.protocol === 'https:';
+  addRow('HTTPS', location.protocol + '//' + location.host, isHttps ? 'pass' : 'fail');
+  logLine('HTTPS: ' + isHttps);
+
+  // 2. Service Worker support
+  const swSupport = 'serviceWorker' in navigator;
+  addRow('Service Worker API', swSupport ? 'Supported' : 'NOT supported', swSupport ? 'pass' : 'fail');
+
+  // 3. Service Worker registered
+  if (swSupport) {
+    try {
+      const reg = await navigator.serviceWorker.getRegistration();
+      if (reg) {
+        addRow('Service Worker registered', reg.scope, 'pass');
+        logLine('SW scope: ' + reg.scope);
+        const state = reg.installing ? 'installing' : reg.waiting ? 'waiting' : reg.active ? 'active' : 'none';
+        addRow('Service Worker state', state, state === 'active' ? 'pass' : 'warn');
+      } else {
+        addRow('Service Worker registered', 'No SW found — not registered yet', 'fail');
+        logLine('No SW registered ❌');
+      }
+    } catch(e) { addRow('Service Worker', 'Error: ' + e.message, 'fail'); }
+  }
+
+  // 4. Manifest fetch
+  try {
+    const r = await fetch(BASE + '/manifest.json');
+    if (r.ok) {
+      const m = await r.json();
+      addRow('Manifest fetch', 'OK — ' + r.status, 'pass');
+      addRow('Manifest name', m.name || '❌ MISSING', m.name ? 'pass' : 'fail');
+      addRow('Manifest short_name', m.short_name || '❌ MISSING', m.short_name ? 'pass' : 'fail');
+      addRow('Manifest start_url', m.start_url || '❌ MISSING', m.start_url ? 'pass' : 'fail');
+      addRow('Manifest scope', m.scope || '❌ MISSING', m.scope ? 'pass' : 'fail');
+      addRow('Manifest display', m.display || '❌ MISSING', m.display === 'standalone' ? 'pass' : 'warn');
+      addRow('Manifest icons count', (m.icons?.length || 0) + ' icons', (m.icons?.length >= 2) ? 'pass' : 'fail');
+      logLine('Manifest OK: ' + m.name);
+
+      // 5. Check each icon
+      if (m.icons) {
+        for (const icon of m.icons) {
+          try {
+            const ir = await fetch(icon.src, { method: 'HEAD' });
+            addRow('Icon ' + icon.sizes + ' (' + icon.purpose + ')', ir.ok ? '✅ ' + icon.src : '❌ 404 — NOT FOUND', ir.ok ? 'pass' : 'fail');
+            logLine('Icon ' + icon.sizes + ': ' + (ir.ok ? 'OK' : '404 ❌'));
+          } catch(e) {
+            addRow('Icon ' + icon.sizes, '❌ Fetch failed: ' + e.message, 'fail');
+          }
+        }
+      }
+    } else {
+      addRow('Manifest fetch', '❌ HTTP ' + r.status + ' — manifest not found!', 'fail');
+      logLine('Manifest 404 ❌');
+    }
+  } catch(e) {
+    addRow('Manifest fetch', '❌ Failed: ' + e.message, 'fail');
+  }
+
+  // 6. beforeinstallprompt — already listened above
+  addRow('beforeinstallprompt', _deferred ? '✅ Fired' : '⏳ Not fired yet — Chrome may require more engagement or criteria not met', _deferred ? 'pass' : 'warn');
+
+  // 7. Standalone check
+  const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+  addRow('Already installed?', isStandalone ? 'Yes — running as PWA' : 'No — running in browser', isStandalone ? 'warn' : 'pass');
+}
+
+async function triggerInstall() {
+  if (!_deferred) { alert('Install prompt not available yet'); return; }
+  _deferred.prompt();
+  const choice = await _deferred.userChoice;
+  const r = document.getElementById('prompt-result');
+  r.style.display = 'block';
+  r.textContent = 'User choice: ' + choice.outcome;
+  _deferred = null;
+}
+
+check();
+</script>
+</body>
+</html>

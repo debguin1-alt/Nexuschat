@@ -1,0 +1,8 @@
+<svg viewBox="0 0 384 384" xmlns="http://www.w3.org/2000/svg">
+  <rect width="384" height="384" fill="#111a1a"/>
+  <polygon points="331.7,111.4 331.7,272.6 192.0,353.3 52.3,272.6 52.3,111.4 192.0,30.7" fill="none" stroke="#2dd4bf" stroke-width="9.6"/>
+  <polygon points="282.8,139.6 282.8,244.4 192.0,296.8 101.2,244.4 101.2,139.6 192.0,87.2" fill="#2dd4bf" opacity="0.15"/>
+  <text x="192.0" y="221.6" text-anchor="middle"
+        font-family="sans-serif" font-weight="900" font-size="84.5"
+        fill="#2dd4bf">NX</text>
+</svg>
