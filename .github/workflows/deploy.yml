@@ -19,16 +19,42 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Inject Firebase config from secrets
+        env:
+          API_KEY:       ${{ secrets.FIREBASE_API_KEY }}
+          AUTH_DOMAIN:   ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          PROJECT_ID:    ${{ secrets.FIREBASE_PROJECT_ID }}
+          SENDER_ID:     ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          APP_ID:        ${{ secrets.FIREBASE_APP_ID }}
         run: |
-          echo "window.__NX_CONFIG__ = {" > config.js
-          echo "  apiKey:            \"${{ secrets.FIREBASE_API_KEY }}\"," >> config.js
-          echo "  authDomain:        \"${{ secrets.FIREBASE_AUTH_DOMAIN }}\"," >> config.js
-          echo "  projectId:         \"${{ secrets.FIREBASE_PROJECT_ID }}\"," >> config.js
-          echo "  messagingSenderId: \"${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}\"," >> config.js
-          echo "  appId:             \"${{ secrets.FIREBASE_APP_ID }}\"" >> config.js
-          echo "};" >> config.js
-          echo "=== config.js contents ==="
-          cat config.js
+          python3 - <<PYEOF
+          import os
+          config = """window.__NX_CONFIG__ = {{
+            apiKey:            "{api_key}",
+            authDomain:        "{auth_domain}",
+            projectId:         "{project_id}",
+            messagingSenderId: "{sender_id}",
+            appId:             "{app_id}"
+          }};""".format(
+            api_key     = os.environ["API_KEY"],
+            auth_domain = os.environ["AUTH_DOMAIN"],
+            project_id  = os.environ["PROJECT_ID"],
+            sender_id   = os.environ["SENDER_ID"],
+            app_id      = os.environ["APP_ID"],
+          )
+          with open("config.js", "w") as f:
+            f.write(config)
+          print("config.js written successfully")
+          print(f"File size: {len(config)} bytes")
+          PYEOF
+
+      - name: Verify config.js exists
+        run: |
+          if [ -f config.js ]; then
+            echo "✅ config.js exists ($(wc -c < config.js) bytes)"
+          else
+            echo "❌ config.js missing — aborting"
+            exit 1
+          fi
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
