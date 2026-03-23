@@ -794,10 +794,10 @@ window.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('touchstart', handleRipple, { passive: true });
   document.addEventListener('mousedown',  handleRipple);
 
-  document.addEventListener('copy',        e => { if (!e.target.closest('input,textarea')) e.preventDefault(); });
-  document.addEventListener('cut',         e => { if (!e.target.closest('input,textarea')) e.preventDefault(); });
-  document.addEventListener('contextmenu', e => { if (!e.target.closest('input,textarea,.msg-bubble')) e.preventDefault(); });
-  document.addEventListener('selectstart', e => { if (!e.target.closest('input,textarea')) e.preventDefault(); });
+  document.addEventListener('copy',        e => { if (!e.target?.closest?.('input,textarea')) e.preventDefault(); });
+  document.addEventListener('cut',         e => { if (!e.target?.closest?.('input,textarea')) e.preventDefault(); });
+  document.addEventListener('contextmenu', e => { if (!e.target?.closest?.('input,textarea,.msg-bubble')) e.preventDefault(); });
+  document.addEventListener('selectstart', e => { if (!e.target?.closest?.('input,textarea')) e.preventDefault(); });
 
   // Sidebar setup
   setupSidebar();

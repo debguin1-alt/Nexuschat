@@ -14,11 +14,11 @@
 /* ──────────────────────────────────────────
    VERSIONS & CACHE NAMES
 ────────────────────────────────────────── */
-const SW_VERSION      = '1.0.0';
-const CACHE_SHELL     = `nexus-shell-v${SW_VERSION}`;    // App shell (never stale)
-const CACHE_STATIC    = `nexus-static-v${SW_VERSION}`;   // Fonts, icons (long-lived)
-const CACHE_RUNTIME   = `nexus-runtime-v${SW_VERSION}`;  // Firebase responses, etc.
-const CACHE_IMAGES    = `nexus-images-v${SW_VERSION}`;   // User-sent images
+const SW_VERSION      = '1.0.1';
+const CACHE_SHELL     = `nexus-shell-v${SW_VERSION}`;
+const CACHE_STATIC    = `nexus-static-v${SW_VERSION}`;
+const CACHE_RUNTIME   = `nexus-runtime-v${SW_VERSION}`;
+const CACHE_IMAGES    = `nexus-images-v${SW_VERSION}`;
 const ALL_CACHES      = [CACHE_SHELL, CACHE_STATIC, CACHE_RUNTIME, CACHE_IMAGES];
 
 const SYNC_TAG_MESSAGES  = 'nexus-sync-messages';
@@ -36,21 +36,20 @@ const STORE_PRESENCE     = 'presence';
    NOTE: Relative paths work under any subdirectory (GitHub Pages).
 ────────────────────────────────────────── */
 const PRECACHE_REQUIRED = [
-  '/Nexuschat/',
-  '/Nexuschat/style.css',
-  '/Nexuschat/app.js',
-  '/Nexuschat/sw-bridge.js',
-  '/Nexuschat/manifest.json',
-  '/Nexuschat/config.js',
+  'https://debguin1-alt.github.io/Nexuschat/',
+  'https://debguin1-alt.github.io/Nexuschat/style.css',
+  'https://debguin1-alt.github.io/Nexuschat/app.js',
+  'https://debguin1-alt.github.io/Nexuschat/sw-bridge.js',
+  'https://debguin1-alt.github.io/Nexuschat/manifest.json',
+  'https://debguin1-alt.github.io/Nexuschat/config.js',
 ];
 
-// Everything here is silently skipped if missing — icons not committed yet, etc.
 const PRECACHE_OPTIONAL = [
-  '/Nexuschat/offline.html',
-  '/Nexuschat/icons/icon-192.png',
-  '/Nexuschat/icons/icon-512.png',
-  '/Nexuschat/icons/icon-maskable-192.png',
-  '/Nexuschat/icons/icon-maskable-512.png',
+  'https://debguin1-alt.github.io/Nexuschat/offline.html',
+  'https://debguin1-alt.github.io/Nexuschat/icons/icon-192.png',
+  'https://debguin1-alt.github.io/Nexuschat/icons/icon-512.png',
+  'https://debguin1-alt.github.io/Nexuschat/icons/icon-maskable-192.png',
+  'https://debguin1-alt.github.io/Nexuschat/icons/icon-maskable-512.png',
 ];
 
 /* ──────────────────────────────────────────
