@@ -1455,9 +1455,18 @@ function startPresenceListener() {
       // _presenceSettled guards against the very first snapshot firing before
       // the current user's online:true has propagated — without it, session
       // restore sees count=0 and wipes a perfectly healthy room.
+      // Only wipe if NO approved members exist at all (not just online ones)
+      // so offline-but-approved members don't lose their room.
       if (_presenceSettled && _onlineCount === 0 && state.me) {
-        await wipeRoom(code);
-        await clearCacheForRoom(code);
+        try {
+          const allApproved = await db.collection('rooms').doc(code)
+            .collection('members').where('approved', '==', true).get();
+          // If truly empty (no approved members at all) → wipe
+          if (allApproved.empty) {
+            await wipeRoom(code);
+            await clearCacheForRoom(code);
+          }
+        } catch { /* silently skip wipe on error */ }
       }
       _presenceSettled = true;
     }, () => {});
@@ -2920,12 +2929,28 @@ async function _handoffAdminRole() {
       .get();
 
     let nextUid = null, nextName = null;
+
+    // First try online members
     snap.forEach(doc => {
       if (doc.id !== state.me.id && doc.data().role !== 'admin' && !nextUid) {
         nextUid  = doc.id;
         nextName = doc.data().name;
       }
     });
+
+    // If no online members found, fall back to any approved member (even offline)
+    if (!nextUid) {
+      const allSnap = await db.collection('rooms').doc(state.roomCode)
+        .collection('members')
+        .where('approved', '==', true)
+        .get();
+      allSnap.forEach(doc => {
+        if (doc.id !== state.me.id && doc.data().role !== 'admin' && !nextUid) {
+          nextUid  = doc.id;
+          nextName = doc.data().name;
+        }
+      });
+    }
 
     if (nextUid) {
       await db.collection('rooms').doc(state.roomCode)
