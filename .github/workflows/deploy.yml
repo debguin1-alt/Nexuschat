@@ -53,12 +53,20 @@ jobs:
       - name: Copy site to staging folder
         run: |
           mkdir -p /tmp/site/icons
+
+          # Copy icons
           cp -r icons/* /tmp/site/icons/
-          cp *.html *.js *.css *.json /tmp/site/ 2>/dev/null || true
+
+          # Copy all site files explicitly
+          for f in index.html offline.html pwa-check.html app.js sw.js sw-bridge.js config.js style.css manifest.json config.example.js; do
+            [ -f "$f" ] && cp "$f" /tmp/site/ && echo "✅ copied $f" || echo "⚠️ skipped $f (not found)"
+          done
+
+          # Create .nojekyll so GitHub Pages serves all files including _ prefixed ones
+          touch /tmp/site/.nojekyll
+
           echo "=== Full site structure ==="
           find /tmp/site -type f | sort
-          echo "=== Icons ==="
-          ls -la /tmp/site/icons/
 
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
