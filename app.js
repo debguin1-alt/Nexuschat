@@ -616,6 +616,12 @@ function updateEntropyMeter(code) {
 const _createRl = { count: 0, resetAt: 0 };
 const _enterRl  = { count: 0, resetAt: 0, wrongCount: 0, lockedUntil: 0 };
 
+/* How many wrong codes allowed before lockout */
+const WRONG_CODE_LIMIT = 5;
+
+/* Live countdown timer handle */
+let _countdownTimer = null;
+
 function checkRateLimit(type) {
   const rl  = type === 'enter' ? _enterRl : _createRl;
   const now = Date.now();
@@ -631,24 +637,85 @@ function checkRateLimit(type) {
   return true;
 }
 
+function _startCountdown(ms) {
+  if (_countdownTimer) { clearInterval(_countdownTimer); _countdownTimer = null; }
+  const endTime = Date.now() + ms;
+
+  function _tick() {
+    const remaining = Math.ceil((endTime - Date.now()) / 1000);
+    if (remaining <= 0) {
+      clearInterval(_countdownTimer);
+      _countdownTimer = null;
+      const errEl = $('join-error') || $('invite-error');
+      const cdEl  = $('nx-countdown');
+      if (errEl) errEl.textContent = '';
+      if (cdEl)  cdEl.remove();
+      const btn = qs('#tab-enter .btn-join') || $('invite-join-btn');
+      if (btn) { btn.disabled = false; if (btn.querySelector('span')) btn.querySelector('span').textContent = btn.id === 'invite-join-btn' ? 'JOIN ROOM' : 'ENTER ROOM'; }
+      return;
+    }
+    const mins    = Math.floor(remaining / 60);
+    const secs    = remaining % 60;
+    const timeStr = mins > 0 ? `${mins}m ${String(secs).padStart(2,'0')}s` : `${secs}s`;
+
+    let cdEl = $('nx-countdown');
+    if (!cdEl) {
+      cdEl = document.createElement('div');
+      cdEl.id = 'nx-countdown';
+      cdEl.style.cssText = [
+        'display:flex','align-items:center','justify-content:center','gap:10px',
+        'margin-top:10px','padding:12px 16px',
+        'background:rgba(255,80,80,0.08)','border:1px solid rgba(255,80,80,0.25)',
+        'border-radius:var(--r)','font-family:var(--font-mono)','font-size:0.78rem',
+        'color:var(--danger)','letter-spacing:1px',
+        'animation:nx-morph-in 0.3s ease both'
+      ].join(';');
+      const errEl = $('join-error') || $('invite-error');
+      if (errEl) errEl.insertAdjacentElement('afterend', cdEl);
+    }
+    cdEl.innerHTML =
+      '<svg viewBox="0 0 20 20" fill="none" width="14" height="14" style="flex-shrink:0">' +
+        '<circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>' +
+        '<path d="M10 6v4l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>' +
+      '</svg>' +
+      'Too many wrong attempts — try again in <strong style="margin-left:4px">' + timeStr + '</strong>';
+
+    const btn = qs('#tab-enter .btn-join') || $('invite-join-btn');
+    if (btn) btn.disabled = true;
+  }
+
+  _tick();
+  _countdownTimer = setInterval(_tick, 500);
+}
+
 function _recordWrongCode() {
   const now = Date.now();
   _enterRl.wrongCount++;
-  const waitMs = Math.min(60000 * Math.pow(2, _enterRl.wrongCount - 1), 8 * 60 * 1000);
+
+  /* Still under the limit — show attempts remaining */
+  if (_enterRl.wrongCount < WRONG_CODE_LIMIT) {
+    const left = WRONG_CODE_LIMIT - _enterRl.wrongCount;
+    showError(`Wrong code — ${left} attempt${left !== 1 ? 's' : ''} remaining`);
+    return;
+  }
+
+  /* Hit the limit — exponential backoff + live countdown */
+  const backoffIndex = _enterRl.wrongCount - WRONG_CODE_LIMIT;
+  const waitMs = Math.min(30000 * Math.pow(2, backoffIndex), 8 * 60 * 1000);
   _enterRl.lockedUntil = now + waitMs;
   _enterRl.resetAt     = now + waitMs;
   _enterRl.count       = 999;
-  const wait = Math.ceil(waitMs / 1000);
-  const mins = wait >= 60 ? `${Math.floor(wait/60)}m ${wait%60}s` : `${wait}s`;
-  showError(`Wrong code — wait ${mins} before trying again`);
+
+  const errEl = $('join-error') || $('invite-error');
+  if (errEl) errEl.textContent = '';
+  _startCountdown(waitMs);
 }
 
 function _checkEnterLock() {
   const now = Date.now();
   if (_enterRl.lockedUntil > now) {
-    const wait = Math.ceil((_enterRl.lockedUntil - now) / 1000);
-    const mins = wait >= 60 ? `${Math.floor(wait/60)}m ${wait%60}s` : `${wait}s`;
-    showError(`Wait ${mins} before trying again`);
+    const remaining = _enterRl.lockedUntil - now;
+    if (!_countdownTimer) _startCountdown(remaining);
     return false;
   }
   return true;
