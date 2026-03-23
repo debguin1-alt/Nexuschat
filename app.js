@@ -1029,6 +1029,67 @@ function buildMe(name) {
   return { id: getUID(), name, color: avatarColor(name), joinedAt: Date.now() };
 }
 
+/* ══════════════════════════════════════════════════
+   SCREENSHOT WATERMARK
+   Renders a diagonal repeating SVG pattern over the
+   full viewport at near-invisible opacity (0.045).
+   Normal use: imperceptible.
+   Screenshots / screen records: clearly readable.
+   Shows viewer name + room + timestamp so leaks
+   can be traced back to the source device.
+══════════════════════════════════════════════════ */
+let _wmInterval = null;
+
+function activateWatermark(name, room) {
+  const el = $('nx-watermark');
+  if (!el) return;
+  el.classList.add('active');
+  _renderWatermark(name, room);
+  /* Update timestamp every 60 seconds so each screenshot captures the exact time */
+  clearInterval(_wmInterval);
+  _wmInterval = setInterval(() => _renderWatermark(name, room), 60000);
+}
+
+function deactivateWatermark() {
+  clearInterval(_wmInterval);
+  _wmInterval = null;
+  const el = $('nx-watermark');
+  if (!el) return;
+  el.classList.remove('active');
+  el.innerHTML = '';
+}
+
+function _renderWatermark(name, room) {
+  const el = $('nx-watermark');
+  if (!el) return;
+
+  const now    = new Date();
+  const date   = now.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' });
+  const time   = now.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' });
+  const label1 = esc(name || 'anonymous');
+  const label2 = `${room ? esc(room) + ' · ' : ''}${date} ${time}`;
+
+  /* Tile size — smaller = more tiles = harder to crop out */
+  const tw = 280, th = 120;
+
+  el.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+    <defs>
+      <pattern id="wm-pat" x="0" y="0" width="${tw}" height="${th}" patternUnits="userSpaceOnUse"
+               patternTransform="rotate(-35)">
+        <text x="${tw/2}" y="${th/2 - 8}"
+              font-family="monospace" font-size="13" font-weight="700"
+              fill="#ffffff" text-anchor="middle"
+              letter-spacing="1">${label1}</text>
+        <text x="${tw/2}" y="${th/2 + 10}"
+              font-family="monospace" font-size="10" font-weight="400"
+              fill="#ffffff" text-anchor="middle"
+              letter-spacing="0.5">${label2}</text>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#wm-pat)"/>
+  </svg>`;
+}
+
 async function registerPresence(role = 'member', approved = false) {
   // Ensure signing key exists before publishing public key to Firestore
   await initSigningKey();
@@ -1069,6 +1130,9 @@ function bootApp() {
   updateAdminBadge();
 
   showScreen('app');
+
+  // Activate screenshot watermark with viewer's identity
+  activateWatermark(state.me.name, state.roomCode);
 
   // Set solo hint code
   const sc = $('solo-code'); if (sc) sc.textContent = state.roomCode;
@@ -2001,6 +2065,15 @@ let _mentionActive = false;
 let _mentionStart  = -1;
 let _searchActive  = false;
 
+/* ── Watermark text — viewer name + time ── */
+function _getWatermarkText() {
+  const name = state.me?.name || 'anonymous';
+  const now  = new Date();
+  const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const date = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
+  return `${name} · ${date} ${time}`;
+}
+
 async function renderMsg(data, docId) {
   const area = $('messages-area'); if (!area) return;
 
@@ -2105,7 +2178,10 @@ async function renderMsg(data, docId) {
         <div class="msg-inner">
           ${senderLine}
           ${replyQuote}
-          <div class="msg-bubble">${bubble}</div>
+          <div class="msg-bubble">
+            ${bubble}
+            <div class="msg-watermark" aria-hidden="true">${esc(_getWatermarkText())}</div>
+          </div>
           <div class="msg-meta">
             <span class="msg-time-sm">${fmtTime(data.ts)}</span>
             ${isMine ? '<span class="msg-status">✓</span>' : ''}
