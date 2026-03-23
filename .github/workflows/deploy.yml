@@ -1,0 +1,38 @@
+name: Deploy NEXUS to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Inject Firebase config from secrets
+        run: |
+          echo "window.__NX_CONFIG__ = {" > config.js
+          echo "  apiKey:            \"${{ secrets.FIREBASE_API_KEY }}\"," >> config.js
+          echo "  authDomain:        \"${{ secrets.FIREBASE_AUTH_DOMAIN }}\"," >> config.js
+          echo "  projectId:         \"${{ secrets.FIREBASE_PROJECT_ID }}\"," >> config.js
+          echo "  messagingSenderId: \"${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}\"," >> config.js
+          echo "  appId:             \"${{ secrets.FIREBASE_APP_ID }}\"" >> config.js
+          echo "};" >> config.js
+          echo "=== config.js contents ==="
+          cat config.js
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
+          publish_branch: gh-pages
