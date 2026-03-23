@@ -1,73 +1,87 @@
 {
-  "name": "NEXUS · Private Chat",
+  "name": "NEXUS \u00b7 Private Chat",
   "short_name": "NEXUS",
-  "description": "Ultra-secure private group chat for your trusted circle",
-  "start_url": "/index.html",
+  "description": "Ultra-secure private room chat. No sign-in. Code-locked rooms. End-to-end encrypted.",
+  "id": "https://debguin1-alt.github.io/Nexuschat/",
+  "start_url": "https://debguin1-alt.github.io/Nexuschat/",
+  "scope": "https://debguin1-alt.github.io/Nexuschat/",
   "display": "standalone",
-  "orientation": "portrait",
-  "theme_color": "#1a2e2e",
-  "background_color": "#111a1a",
-  "categories": ["communication", "social"],
-  "lang": "en",
-  "scope": "/",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#0d1a1a",
+  "theme_color": "#0d1a1a",
+  "dir": "ltr",
+  "lang": "en-US",
   "icons": [
-    {
-      "src": "icons/icon-72.png",
-      "sizes": "72x72",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "icons/icon-96.png",
-      "sizes": "96x96",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "icons/icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "icons/icon-144.png",
-      "sizes": "144x144",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "icons/icon-152.png",
-      "sizes": "152x152",
-      "type": "image/png",
-      "purpose": "maskable any"
-    },
     {
       "src": "icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "maskable any"
-    },
-    {
-      "src": "icons/icon-384.png",
-      "sizes": "384x384",
-      "type": "image/png",
-      "purpose": "maskable any"
+      "purpose": "any"
     },
     {
       "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "maskable any"
-    }
-  ],
-  "shortcuts": [
+      "purpose": "any"
+    },
     {
-      "name": "Open Chat",
-      "short_name": "Chat",
-      "url": "/index.html",
-      "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96" }]
+      "src": "icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "screenshots": [],
-  "prefer_related_applications": false
+  "screenshots": [
+    {
+      "src": "screenshots/screen-mobile.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "NEXUS Private Chat on mobile"
+    }
+  ],
+  "share_target": {
+    "action": "https://debguin1-alt.github.io/Nexuschat/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    },
+    "enctype": "application/x-www-form-urlencoded"
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+nexus",
+      "url": "https://debguin1-alt.github.io/Nexuschat/?roomCode=%s"
+    }
+  ],
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": [
+      "navigate-existing",
+      "auto"
+    ]
+  },
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "categories": [
+    "communication",
+    "social",
+    "utilities"
+  ]
 }

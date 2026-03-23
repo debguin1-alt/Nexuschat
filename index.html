@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>NEXUS · Private Chat</title>
-  <meta name="description" content="Ultra-secure private chat for your circle" />
-  <meta name="theme-color" content="#1a2e2e" />
+  <meta name="description" content="Ultra-secure private group chat. Code-locked rooms." />
+  <meta name="theme-color" content="#0d1a1a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="NEXUS" />
@@ -18,98 +18,278 @@
 </head>
 <body>
 
-<!-- RIPPLE CONTAINER -->
 <div id="ripple-container"></div>
 
-<!-- SPLASH SCREEN -->
 <div id="splash" class="screen active">
   <div class="splash-bg"></div>
   <div class="splash-content">
-    <div class="logo-mark">
-      <div class="logo-hex">
-        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <polygon points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5" stroke="var(--teal)" stroke-width="3" fill="none" class="hex-outline"/>
-          <polygon points="50,18 80,34 80,66 50,82 20,66 20,34" fill="var(--teal)" opacity="0.15"/>
-          <text x="50" y="58" text-anchor="middle" font-family="Syne" font-weight="800" font-size="22" fill="var(--teal)">NX</text>
-        </svg>
-      </div>
+    <div class="logo-hex nx-anim" style="--nx-d:0.1s">
+      <svg viewBox="0 0 100 100" fill="none">
+        <polygon points="50,5 90,27.5 90,72.5 50,95 10,72.5 10,27.5"
+                 stroke="var(--teal)" stroke-width="3" fill="none" class="hex-outline"/>
+        <polygon points="50,18 80,34 80,66 50,82 20,66 20,34"
+                 fill="var(--teal)" opacity="0.15"/>
+        <text x="50" y="58" text-anchor="middle"
+              font-family="Syne" font-weight="800" font-size="22" fill="var(--teal)">NX</text>
+      </svg>
     </div>
-    <h1 class="splash-title">NEXUS</h1>
-    <p class="splash-sub">End-to-end encrypted · Private · Secure</p>
-    <div class="splash-dots">
-      <span></span><span></span><span></span>
-    </div>
+    <h1 class="splash-title nx-anim" style="--nx-d:0.22s">NEXUS</h1>
+    <p class="splash-sub nx-anim" style="--nx-d:0.32s">End-to-end encrypted · Private · Secure</p>
+    <div class="splash-dots nx-anim" style="--nx-d:0.42s"><span></span><span></span><span></span></div>
   </div>
 </div>
 
-<!-- JOIN SCREEN -->
 <div id="join-screen" class="screen">
   <div class="join-bg"></div>
   <div class="join-container">
-    <div class="join-header">
+
+    <div class="join-header nx-anim" style="--nx-d:0.05s">
       <div class="logo-sm">
-        <svg viewBox="0 0 60 60" fill="none"><polygon points="30,3 54,16.5 54,43.5 30,57 6,43.5 6,16.5" stroke="var(--teal)" stroke-width="2" fill="none"/><text x="30" y="35" text-anchor="middle" font-family="Syne" font-weight="800" font-size="14" fill="var(--teal)">NX</text></svg>
+        <svg viewBox="0 0 60 60" fill="none">
+          <polygon points="30,3 54,16.5 54,43.5 30,57 6,43.5 6,16.5"
+                   stroke="var(--teal)" stroke-width="2" fill="none"/>
+          <text x="30" y="35" text-anchor="middle"
+                font-family="Syne" font-weight="800" font-size="14" fill="var(--teal)">NX</text>
+        </svg>
       </div>
       <h2>NEXUS</h2>
-      <p>Enter your credentials to access the secure network</p>
+      <p>Private group chat · Code-locked · No sign-in</p>
     </div>
 
-    <div class="join-form">
+    <div class="join-form nx-anim" style="--nx-d:0.14s">
+
       <div class="field-group">
-        <label>FULL NAME</label>
+        <label>YOUR NAME <span class="label-opt">— optional</span></label>
         <div class="input-wrap">
-          <span class="input-icon">◈</span>
-          <input type="text" id="input-name" placeholder="Your display name" maxlength="24" autocomplete="off" />
+          <span class="input-icon">
+            <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
+              <circle cx="10" cy="7" r="3.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <input type="text" id="input-name" placeholder="Leave blank to stay anonymous"
+                 maxlength="24" autocomplete="off" />
         </div>
       </div>
 
-      <div class="field-group">
-        <label>MOBILE NUMBER</label>
-        <div class="input-wrap">
-          <span class="input-icon">◉</span>
-          <input type="tel" id="input-phone" placeholder="+91 98765 43210" maxlength="15" autocomplete="off" />
-        </div>
+      <div class="join-tabs">
+        <button class="join-tab-btn active ripple-btn" data-tab="create" onclick="switchJoinTab('create')">
+          <svg viewBox="0 0 16 16" fill="none" width="13" height="13">
+            <path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          CREATE ROOM
+        </button>
+        <button class="join-tab-btn ripple-btn" data-tab="enter" onclick="switchJoinTab('enter')">
+          <svg viewBox="0 0 16 16" fill="none" width="13" height="13">
+            <path d="M6 3l5 5-5 5" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          ENTER ROOM
+        </button>
       </div>
 
-      <div class="field-group">
-        <label>SECRET ACCESS CODE</label>
-        <div class="input-wrap">
-          <span class="input-icon">◆</span>
-          <input type="password" id="input-code" placeholder="Enter 6-digit secret code" maxlength="20" autocomplete="off" />
-          <button class="toggle-pw" onclick="togglePw()" id="pw-toggle">👁</button>
+      <div class="join-tab-panel active" id="tab-create">
+        <div class="field-group">
+          <label>ROOM CODE <span class="label-opt">— min 6 chars, becomes the encryption key</span></label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
+                <rect x="3" y="9" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M7 9V6a3 3 0 016 0v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="10" cy="14" r="1.2" fill="currentColor"/>
+              </svg>
+            </span>
+            <input type="text" id="input-create-code"
+                   placeholder="e.g. NEXUS1"
+                   data-placeholders='["e.g. NEXUS1","e.g. 482910","e.g. HAWK42","e.g. STORM9","e.g. ALPHA7","e.g. 007XYZ"]'
+                   maxlength="32" autocomplete="off" spellcheck="false"
+                   oninput="updateEntropyMeter(this.value)" />
+            <button class="toggle-pw ripple-btn" id="create-eye-btn"
+                    onclick="toggleVis('input-create-code','create-eye-btn')" title="Show/hide">
+              <svg class="eye-open" viewBox="0 0 20 20" fill="none" width="16" height="16">
+                <ellipse cx="10" cy="10" rx="7" ry="4.5" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="10" cy="10" r="2" fill="currentColor"/>
+              </svg>
+              <svg class="eye-closed" viewBox="0 0 20 20" fill="none" width="16" height="16" style="display:none">
+                <path d="M3 3l14 14M8.5 8.7A2 2 0 0012 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M5.5 5.9C4.2 7 3.3 8.4 3 10c1.3 4 7 6 7 6s2.6-.9 4.6-2.6M16.7 13.3C17.5 12.3 18 11.2 18 10c-1.3-4-7-6-7-6-.9 0-1.8.2-2.6.4"
+                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="code-hint">This becomes your room code and the encryption key. Share it with your group.</div>
+
+          <div class="entropy-bar-wrap" id="entropy-wrap" style="display:none">
+            <div class="entropy-bar"><div class="entropy-fill" id="entropy-fill"></div></div>
+            <span class="entropy-label" id="entropy-label"></span>
+          </div>
         </div>
-        <div class="code-hint">Ask your group admin for the access code</div>
+        <div class="tab-info-box">
+          <svg viewBox="0 0 20 20" fill="none" width="15" height="15" style="flex-shrink:0;color:var(--teal)">
+            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M10 9v5M10 7v.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span>All messages are encrypted using your code as the key. Only people who know the code can read them.</span>
+        </div>
+        <button class="btn-join ripple-btn" onclick="handleCreate()">
+          <span>CREATE ROOM</span>
+          <div class="btn-shimmer"></div>
+        </button>
       </div>
 
-      <button class="btn-join ripple-btn" onclick="handleJoin()">
-        <span>ACCESS NEXUS</span>
-        <div class="btn-shimmer"></div>
-      </button>
+      <div class="join-tab-panel" id="tab-enter">
+        <div class="field-group">
+          <label>ROOM CODE</label>
+          <div class="input-wrap">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
+                <circle cx="7.5" cy="10" r="3.5" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M10.5 10h7M15 10v2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <input type="text" id="input-room-code"
+                   placeholder="Enter the room code"
+                   maxlength="32" autocomplete="off" spellcheck="false" />
+            <button class="toggle-pw ripple-btn" id="enter-eye-btn"
+                    onclick="toggleVis('input-room-code','enter-eye-btn')" title="Show/hide">
+              <svg class="eye-open" viewBox="0 0 20 20" fill="none" width="16" height="16">
+                <ellipse cx="10" cy="10" rx="7" ry="4.5" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="10" cy="10" r="2" fill="currentColor"/>
+              </svg>
+              <svg class="eye-closed" viewBox="0 0 20 20" fill="none" width="16" height="16" style="display:none">
+                <path d="M3 3l14 14M8.5 8.7A2 2 0 0012 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                <path d="M5.5 5.9C4.2 7 3.3 8.4 3 10c1.3 4 7 6 7 6s2.6-.9 4.6-2.6M16.7 13.3C17.5 12.3 18 11.2 18 10c-1.3-4-7-6-7-6-.9 0-1.8.2-2.6.4"
+                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="code-hint">Enter the code shared by your group admin</div>
+        </div>
+        <button class="btn-join ripple-btn" onclick="handleEnter()">
+          <span>ENTER ROOM</span>
+          <div class="btn-shimmer"></div>
+        </button>
+      </div>
 
       <div id="join-error" class="error-msg"></div>
     </div>
 
-    <div class="security-badge">
-      <span>🔒</span>
-      <span>256-bit encrypted · Zero-knowledge architecture</span>
+    <div class="security-badge nx-anim" style="--nx-d:0.28s">
+      <svg viewBox="0 0 20 20" fill="none" width="14" height="14">
+        <rect x="4" y="9" width="12" height="9" rx="2" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M7 9V6.5a3 3 0 016 0V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="10" cy="14" r="1.2" fill="currentColor"/>
+      </svg>
+      <span>Code-key encrypted · No sign-in · Zero-knowledge</span>
     </div>
+
   </div>
 </div>
 
-<!-- MAIN APP -->
-<div id="app" class="screen">
+<div id="waiting-screen" class="screen">
+  <div class="waiting-bg"></div>
+  <div class="waiting-container">
 
-  <!-- SIDEBAR -->
-  <aside id="sidebar" class="sidebar">
-    <div class="sidebar-header">
-      <div class="logo-sm">
-        <svg viewBox="0 0 60 60" fill="none"><polygon points="30,3 54,16.5 54,43.5 30,57 6,43.5 6,16.5" stroke="var(--teal)" stroke-width="2" fill="none"/><text x="30" y="35" text-anchor="middle" font-family="Syne" font-weight="800" font-size="14" fill="var(--teal)">NX</text></svg>
-      </div>
-      <span class="app-name">NEXUS</span>
-      <button class="icon-btn" onclick="openSettings()" title="Settings">⚙</button>
+    <div class="waiting-pulse-ring"></div>
+
+    <div class="waiting-avatar-wrap">
+      <div class="avatar waiting-avatar" id="waiting-avatar"></div>
     </div>
 
-    <div class="my-profile-mini" onclick="openProfile()">
+    <h2 class="waiting-title">Waiting for approval</h2>
+    <p class="waiting-name" id="waiting-name"></p>
+
+    <div class="waiting-room-row">
+      <svg viewBox="0 0 20 20" fill="none" width="12" height="12" style="flex-shrink:0">
+        <rect x="3" y="9" width="14" height="9" rx="2" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M7 9V6a3 3 0 016 0v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <span id="waiting-room-code" class="waiting-room-code"></span>
+    </div>
+
+    <p class="waiting-hint">An admin needs to approve your request.<br/>Please keep this screen open.</p>
+
+    <div class="waiting-dots"><span></span><span></span><span></span></div>
+
+    <button class="btn-waiting-cancel ripple-btn" onclick="cancelJoinRequest()">
+      <svg viewBox="0 0 20 20" fill="none" width="13" height="13" style="flex-shrink:0">
+        <path d="M13 10H3M5 7l-3 3 3 3" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M9 4h6a1 1 0 011 1v10a1 1 0 01-1 1H9"
+              stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Cancel Request
+    </button>
+
+  </div>
+</div>
+
+<div id="invite-screen" class="screen">
+  <div class="invite-bg"></div>
+  <div class="invite-container">
+    <div class="invite-logo">
+      <svg viewBox="0 0 60 60" fill="none" width="52" height="52">
+        <polygon points="30,3 54,16.5 54,43.5 30,57 6,43.5 6,16.5" stroke="var(--teal)" stroke-width="1.8" fill="none" opacity="0.7"/>
+        <polygon points="30,12 46,21 46,39 30,48 14,39 14,21" fill="var(--teal)" opacity="0.08"/>
+        <text x="30" y="35" text-anchor="middle" font-family="Syne" font-weight="800" font-size="13" fill="var(--teal)">NX</text>
+      </svg>
+    </div>
+    <p class="invite-label">YOU'VE BEEN INVITED</p>
+    <h2 class="invite-title">Enter the room code<br/>to join</h2>
+    <p class="invite-hint">Ask the person who shared this link for the room code.</p>
+    <div class="invite-input-wrap">
+      <input id="invite-code-input" type="password" placeholder="Room code…"
+             autocomplete="off" autocorrect="off" spellcheck="false"
+             oninput="checkInviteCode(this)" onkeydown="if(event.key==='Enter') joinFromInvite()"/>
+      <button class="invite-vis-btn" onclick="toggleVis('invite-code-input','invite-vis-btn')" id="invite-vis-btn" type="button">
+        <svg class="eye-open" viewBox="0 0 20 20" fill="none" width="14" height="14"><path d="M1 10s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6z" stroke="currentColor" stroke-width="1.4"/><circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.4"/></svg>
+        <svg class="eye-closed" viewBox="0 0 20 20" fill="none" width="14" height="14" style="display:none"><path d="M2 2l16 16M7.5 7.6A4 4 0 0013.4 13M4.2 4.4C2.6 5.8 1 8 1 10c0 0 3.5 6 9 6a9 9 0 004.8-1.4M8 4.1A9 9 0 0119 10s-.7 1.4-2 2.8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div id="invite-error" class="invite-error"></div>
+    <button class="btn-invite-join ripple-btn" id="invite-join-btn" onclick="joinFromInvite()" disabled>
+      <span>JOIN ROOM</span>
+    </button>
+    <button class="btn-invite-back" onclick="cancelInvite()">Back to Home</button>
+  </div>
+</div>
+
+<div id="app" class="screen">
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header nx-anim" style="--nx-d:0.05s">
+      <div class="logo-sm">
+        <svg viewBox="0 0 60 60" fill="none">
+          <polygon points="30,3 54,16.5 54,43.5 30,57 6,43.5 6,16.5"
+                   stroke="var(--teal)" stroke-width="2" fill="none"/>
+          <text x="30" y="35" text-anchor="middle"
+                font-family="Syne" font-weight="800" font-size="14" fill="var(--teal)">NX</text>
+        </svg>
+      </div>
+      <div class="sidebar-title-wrap">
+        <span class="app-name">NEXUS</span>
+        <span class="room-code-pill" id="room-code-pill"
+              onclick="copyRoomCode()" title="Tap to copy">····</span>
+      </div>
+      <button class="icon-btn" onclick="shareRoomLink()" title="Share invite link" id="share-room-btn">
+        <svg viewBox="0 0 20 20" fill="none" width="17" height="17">
+          <circle cx="15" cy="4" r="2" stroke="currentColor" stroke-width="1.4"/>
+          <circle cx="15" cy="16" r="2" stroke="currentColor" stroke-width="1.4"/>
+          <circle cx="5" cy="10" r="2" stroke="currentColor" stroke-width="1.4"/>
+          <path d="M7 9l6-3.5M7 11l6 3.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="icon-btn" onclick="openSettings()" title="Settings">
+        <svg viewBox="0 0 22 22" fill="none" width="18" height="18">
+          <circle cx="11" cy="11" r="3" stroke="currentColor" stroke-width="1.6"/>
+          <path d="M11 2.5v1.8M11 17.7v1.8M2.5 11h1.8M17.7 11h1.8M4.7 4.7l1.3 1.3M16 16l1.3 1.3M4.7 17.3l1.3-1.3M16 6l1.3-1.3"
+                stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="my-profile-mini nx-anim" style="--nx-d:0.12s">
       <div class="avatar-wrap">
         <div class="avatar" id="my-avatar-sidebar"></div>
         <div class="status-dot online"></div>
@@ -118,118 +298,184 @@
         <div class="profile-name" id="my-name-sidebar">You</div>
         <div class="profile-status">● Online</div>
       </div>
-      <div class="encrypted-badge">E2E</div>
+      <div id="my-admin-badge" class="admin-badge" style="display:none" title="You are an admin">
+        <svg viewBox="0 0 20 20" fill="none" width="11" height="11">
+          <path d="M10 2l2.2 6.8H19l-5.6 4 2.2 6.8L10 15.5l-5.6 3.9 2.2-6.8L1 9.2h6.8z"
+                stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+        </svg>
+        ADMIN
+      </div>
     </div>
 
     <div class="sidebar-section">
-      <div class="section-label">MEMBERS <span id="online-count" class="count-badge">0</span></div>
+      <div class="section-label">
+        ONLINE <span id="online-count" class="count-badge">1</span>
+      </div>
       <div id="members-list" class="members-list"></div>
     </div>
 
     <div class="sidebar-footer">
-      <button class="btn-logout ripple-btn small" onclick="handleLogout()">⬡ Leave Network</button>
+      <button class="btn-logout ripple-btn" onclick="handleLogout()">
+        <svg viewBox="0 0 20 20" fill="none" width="14" height="14" style="flex-shrink:0">
+          <path d="M13 10H3M5 7l-3 3 3 3" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9 4h6a1 1 0 011 1v10a1 1 0 01-1 1H9"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        Leave Room
+      </button>
     </div>
   </aside>
 
-  <!-- MAIN AREA -->
   <main id="main-area" class="main-area">
 
-    <!-- CHAT VIEW -->
-    <div id="chat-view" class="chat-view active">
-      <div class="chat-header" id="chat-header">
-        <button class="back-btn icon-btn" onclick="backToList()" style="display:none">←</button>
-        <div class="chat-header-info">
-          <div class="chat-avatar" id="chat-avatar"></div>
-          <div>
-            <div class="chat-name" id="chat-name">Select a member to chat</div>
-            <div class="chat-status" id="chat-status">—</div>
-          </div>
-        </div>
-        <div class="chat-actions" id="chat-actions" style="display:none">
-          <button class="icon-btn call-btn ripple-btn" onclick="startCall('voice')" title="Voice Call">📞</button>
-          <button class="icon-btn call-btn ripple-btn" onclick="startCall('video')" title="Video Call">📹</button>
-          <button class="icon-btn ripple-btn" onclick="openChatInfo()" title="Info">ℹ</button>
-        </div>
-      </div>
+    <div class="chat-header" id="chat-header">
 
-      <div id="messages-area" class="messages-area">
-        <div class="empty-chat">
-          <div class="empty-icon">
-            <svg viewBox="0 0 80 80" fill="none" width="80" height="80">
-              <polygon points="40,4 72,22 72,58 40,76 8,58 8,22" stroke="var(--teal)" stroke-width="1.5" fill="none" opacity="0.5"/>
-              <circle cx="40" cy="40" r="10" stroke="var(--teal)" stroke-width="1.5" fill="none" opacity="0.5"/>
-              <line x1="40" y1="22" x2="40" y2="30" stroke="var(--teal)" stroke-width="1.5" opacity="0.5"/>
-              <line x1="40" y1="50" x2="40" y2="58" stroke="var(--teal)" stroke-width="1.5" opacity="0.5"/>
-            </svg>
-          </div>
-          <p>Select a member from the list<br/>to start a secure conversation</p>
-          <span class="enc-note">All messages are end-to-end encrypted</span>
-        </div>
-      </div>
-
-      <div id="typing-indicator" class="typing-indicator" style="display:none">
-        <span></span><span></span><span></span>
-        <div class="typing-text" id="typing-text">typing...</div>
-      </div>
-
-      <div class="input-area" id="input-area" style="display:none">
-        <div class="input-toolbar">
-          <button class="icon-btn attach-btn ripple-btn" onclick="triggerAttach()" title="Attach">📎</button>
-        </div>
-        <div class="msg-input-wrap">
-          <textarea id="msg-input" placeholder="Encrypted message..." rows="1" onkeydown="handleKey(event)" oninput="handleTyping(this)"></textarea>
-        </div>
-        <button class="send-btn ripple-btn" id="send-btn" onclick="sendMessage()">
-          <svg viewBox="0 0 24 24" fill="none" width="20" height="20">
-            <path d="M22 2L11 13M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <div class="chat-header-info">
+        <div class="group-avatar">
+          <svg viewBox="0 0 28 28" fill="none" width="28" height="28">
+            <polygon points="14,2 25,8 25,20 14,26 3,20 3,8"
+                     stroke="var(--teal)" stroke-width="1.5" fill="none"/>
+            <text x="14" y="17" text-anchor="middle"
+                  font-family="Syne" font-weight="800" font-size="8" fill="var(--teal)">NX</text>
           </svg>
-        </button>
+        </div>
+        <div>
+          <div class="chat-name" id="chat-name">GROUP ROOM</div>
+          <div class="chat-status" id="chat-status">
+            <span class="online-dot-sm"></span>
+            <span id="member-status-text">0 members online</span>
+          </div>
+        </div>
       </div>
+      <button class="icon-btn ripple-btn" onclick="copyRoomCode()" title="Copy room code">
+        <svg viewBox="0 0 20 20" fill="none" width="17" height="17">
+          <rect x="7" y="7" width="10" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M13 7V5a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <button class="icon-btn ripple-btn" id="search-btn" onclick="toggleSearch()" title="Search messages">
+        <svg viewBox="0 0 20 20" fill="none" width="17" height="17">
+          <circle cx="8.5" cy="8.5" r="5" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>
+      </button>
     </div>
 
-    <!-- CALL OVERLAY -->
-    <div id="call-overlay" class="call-overlay" style="display:none">
-      <div class="call-bg"></div>
-      <div class="call-content">
-        <div class="call-status-text" id="call-status-text">Connecting...</div>
-        <div class="call-avatar-large" id="call-avatar-large"></div>
-        <div class="call-name-large" id="call-name-large"></div>
-        <div class="call-type-badge" id="call-type-badge">VOICE CALL</div>
-        <div class="call-timer" id="call-timer">00:00</div>
-        <div class="call-controls">
-          <button class="call-ctrl-btn ripple-btn" id="mute-btn" onclick="toggleMute()" title="Mute">🎤</button>
-          <button class="call-ctrl-btn end-call ripple-btn" onclick="endCall()" title="End Call">📵</button>
-          <button class="call-ctrl-btn ripple-btn" id="speaker-btn" onclick="toggleSpeaker()" title="Speaker">🔊</button>
+    <div id="search-bar" class="search-bar" style="display:none">
+      <svg viewBox="0 0 20 20" fill="none" width="15" height="15" style="flex-shrink:0;color:var(--text2)">
+        <circle cx="8.5" cy="8.5" r="5" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M13 13l3.5 3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+      </svg>
+      <input type="text" placeholder="Search messages…" oninput="doSearch(this.value)"
+             onkeydown="if(event.key==='Escape')toggleSearch()" autocomplete="off" />
+      <span id="search-count" class="search-count"></span>
+      <button class="icon-btn" onclick="toggleSearch()" style="flex-shrink:0">
+        <svg viewBox="0 0 20 20" fill="none" width="13" height="13">
+          <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="messages-area" class="messages-area">
+      <div class="room-welcome" id="room-welcome">
+        <div class="welcome-icon">
+          <svg viewBox="0 0 60 60" fill="none" width="60" height="60">
+            <polygon points="30,3 54,16.5 54,43.5 30,57 6,43.5 6,16.5"
+                     stroke="var(--teal)" stroke-width="1.5" fill="none" opacity="0.6"/>
+            <polygon points="30,12 46,21 46,39 30,48 14,39 14,21"
+                     fill="var(--teal)" opacity="0.08"/>
+            <text x="30" y="35" text-anchor="middle"
+                  font-family="Syne" font-weight="800" font-size="13" fill="var(--teal)" opacity="0.7">NX</text>
+          </svg>
         </div>
-        <div class="call-wave">
-          <span></span><span></span><span></span><span></span><span></span>
-        </div>
+        <p class="welcome-title" id="welcome-room-name">ROOM</p>
+        <p class="welcome-sub">All messages are encrypted with your room code as the key. Only members of this room can read them.</p>
+        <div class="enc-note">◈ End-to-end encrypted · Zero-knowledge</div>
       </div>
+      <button id="scroll-fab" class="scroll-fab" style="display:none" aria-label="Scroll to bottom">
+        <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
+          <path d="M5 8l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="scroll-fab-badge" class="scroll-fab-badge"></span>
+      </button>
+    </div>
+
+    <div id="typing-indicator" class="typing-indicator" style="display:none">
+      <span></span><span></span><span></span>
+      <div class="typing-text" id="typing-text"></div>
+    </div>
+
+    <div id="reply-bar" class="reply-bar" style="display:none">
+      <div class="reply-bar-line"></div>
+      <div class="reply-bar-content">
+        <div class="reply-bar-sender" id="reply-sender"></div>
+        <div class="reply-bar-text"   id="reply-preview"></div>
+      </div>
+      <button class="reply-bar-close ripple-btn" onclick="clearReply()" aria-label="Cancel reply">
+        <svg viewBox="0 0 20 20" fill="none" width="14" height="14">
+          <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="solo-hint" class="solo-hint" style="display:none">
+      <svg viewBox="0 0 20 20" fill="none" width="13" height="13" style="flex-shrink:0">
+        <circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M4 17c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <span>Share the room code <strong id="solo-code"></strong> to start chatting</span>
+    </div>
+
+    <div class="input-area" id="input-area">
+      <button class="icon-btn attach-btn ripple-btn" onclick="triggerAttach()" title="Attach file">
+        <svg viewBox="0 0 20 20" fill="none" width="19" height="19">
+          <path d="M16.5 10.5l-6.3 6.3a4.24 4.24 0 01-6-6l7-7a2.83 2.83 0 014 4l-7.1 7.1a1.41 1.41 0 01-2-2l6.3-6.3"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </button>
+      <div class="msg-input-wrap">
+        <textarea id="msg-input" placeholder="Send an encrypted message…"
+                  rows="1" onkeydown="handleKey(event)" oninput="handleTyping(this)"></textarea>
+      </div>
+      <button class="send-btn" id="send-btn" aria-label="Send message">
+        <svg viewBox="0 0 20 20" fill="none" width="18" height="18">
+          <path d="M17.5 2.5L9 11M17.5 2.5L12 17.5l-3-6.5-6.5-3L17.5 2.5Z"
+                stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
     </div>
 
   </main>
 </div>
 
-<!-- MODALS -->
-<!-- SETTINGS MODAL -->
 <div id="settings-modal" class="modal-overlay" style="display:none" onclick="closeModal(event)">
   <div class="modal">
     <div class="modal-header">
       <h3>SETTINGS</h3>
-      <button class="icon-btn" onclick="closeSettings()">✕</button>
+      <button class="icon-btn" onclick="closeSettings()">
+        <svg viewBox="0 0 20 20" fill="none" width="16" height="16">
+          <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </button>
     </div>
     <div class="modal-body">
-      <div class="setting-item">
-        <label>NOTIFICATIONS</label>
+
+      <div class="setting-item" id="approval-setting-row" style="display:none">
+        <div class="setting-label-group">
+          <label>APPROVAL GATE</label>
+          <span class="setting-sublabel">Requires admin approval for new members</span>
+        </div>
         <div class="toggle-wrap">
-          <input type="checkbox" id="notif-toggle" checked onchange="toggleNotifications()" />
-          <label for="notif-toggle" class="toggle"></label>
+          <input type="checkbox" id="approval-toggle" onchange="toggleApprovalGate()" />
+          <label for="approval-toggle" class="toggle"></label>
         </div>
       </div>
       <div class="setting-item">
         <label>SOUND ALERTS</label>
         <div class="toggle-wrap">
-          <input type="checkbox" id="sound-toggle" checked />
+          <input type="checkbox" id="sound-toggle" checked onchange="toggleSoundAlerts()" />
           <label for="sound-toggle" class="toggle"></label>
         </div>
       </div>
@@ -240,43 +486,99 @@
           <label for="anim-toggle" class="toggle"></label>
         </div>
       </div>
-      <div class="setting-item">
-        <label>STATUS MESSAGE</label>
-        <input type="text" id="status-input" placeholder="Set your status..." class="setting-input" maxlength="40" />
-      </div>
+      <div class="setting-divider"></div>
       <div class="setting-item">
         <label>APP VERSION</label>
-        <span class="setting-value">NEXUS v2.0.0</span>
+        <span class="setting-value">NEXUS v1.0</span>
       </div>
       <div class="setting-item">
         <label>ENCRYPTION</label>
-        <span class="setting-value teal">AES-256 Active ✓</span>
+        <span class="setting-value teal">AES-256-GCM ✓</span>
       </div>
-      <button class="btn-join ripple-btn small" onclick="saveSettings()" style="margin-top:16px">Save Settings</button>
+      <div class="setting-item">
+        <label>SIGNING</label>
+        <span class="setting-value teal">ECDSA P-256 ✓</span>
+      </div>
+      <div class="setting-item">
+        <label>KEY EPOCH</label>
+        <span class="setting-value teal" id="epoch-display">0</span>
+      </div>
+
+      <div id="rotate-key-row" class="setting-item" style="display:none">
+        <div class="setting-label-group">
+          <label>ROTATE KEY</label>
+          <span class="setting-sublabel">New messages will use a freshly derived key</span>
+        </div>
+        <button class="btn-rotate-key ripple-btn" onclick="rotateKey(); closeSettings();">
+          <svg viewBox="0 0 20 20" fill="none" width="13" height="13">
+            <path d="M4 4v4h4M16 16v-4h-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M4.3 12A7 7 0 0015.7 8M15.7 8A7 7 0 004.3 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+          ROTATE
+        </button>
+      </div>
+
+      <button class="btn-join ripple-btn small" onclick="saveSettings()" style="margin-top:16px">
+        SAVE SETTINGS
+      </button>
     </div>
   </div>
 </div>
 
-<!-- NOTIFICATION TOAST -->
+<div id="media-viewer" class="media-viewer" style="display:none" onclick="closeMediaViewer()">
+  <button class="mv-close" onclick="closeMediaViewer()">
+    <svg viewBox="0 0 20 20" fill="none" width="18" height="18">
+      <path d="M15 5L5 15M5 5l10 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <img id="mv-img" src="" alt="" style="display:none" />
+  <video id="mv-video" controls style="display:none"></video>
+</div>
+
 <div id="toast-container" class="toast-container"></div>
 
-<!-- INCOMING CALL -->
-<div id="incoming-call" class="incoming-call" style="display:none">
-  <div class="incoming-info">
-    <div class="incoming-avatar" id="incoming-avatar"></div>
-    <div>
-      <div class="incoming-name" id="incoming-name">Unknown</div>
-      <div class="incoming-type" id="incoming-type">Incoming Voice Call</div>
-    </div>
-  </div>
-  <div class="incoming-actions">
-    <button class="call-ctrl-btn accept ripple-btn" onclick="acceptCall()">📞</button>
-    <button class="call-ctrl-btn decline ripple-btn" onclick="declineCall()">📵</button>
-  </div>
-</div>
+<input type="file" id="file-input"
+       accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip"
+       style="display:none" onchange="handleFileAttach(event)" />
 
-<input type="file" id="file-input" accept="image/*,video/*,.pdf,.doc,.docx" style="display:none" onchange="handleFileAttach(event)" />
-
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-check-compat.js"></script>
+<script src="config.js"></script><!-- injected by GitHub Actions, gitignored locally -->
 <script src="app.js"></script>
+<script src="sw-bridge.js"></script>
+<script>
+(function () {
+  function startRotatingPlaceholder(input) {
+    const list = JSON.parse(input.dataset.placeholders || '[]');
+    if (!list.length) return;
+    let idx = 0;
+
+    function rotate() {
+      if (document.activeElement === input || input.value) return;
+      // Fade out
+      input.classList.add('ph-fade');
+      setTimeout(function () {
+        idx = (idx + 1) % list.length;
+        input.placeholder = list[idx];
+        // Fade in
+        input.classList.remove('ph-fade');
+      }, 400);
+    }
+
+    setInterval(rotate, 2200);
+  }
+
+  function init() {
+    document.querySelectorAll('[data-placeholders]').forEach(startRotatingPlaceholder);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
 </body>
 </html>
