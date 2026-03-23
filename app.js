@@ -3149,6 +3149,24 @@ function rmToast(el) {
 ────────────────────────────────────────── */
 let _deferredInstall = null;
 window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault(); _deferredInstall = e;
-  setTimeout(() => toast('Install NEXUS', 'Add it to your home screen.', '⬡'), 6000);
+  e.preventDefault();
+  _deferredInstall = e;
+  setTimeout(() => {
+    const t = toast('Install NEXUS', 'Tap here to add it to your home screen.', '⬡');
+    if (t) t.style.cursor = 'pointer';
+    if (t) t.addEventListener('click', () => {
+      if (_deferredInstall) {
+        _deferredInstall.prompt();
+        _deferredInstall.userChoice.then(choice => {
+          if (choice.outcome === 'accepted') toast('NEXUS installed!', 'Find it on your home screen.', '✓');
+          _deferredInstall = null;
+        });
+      }
+    });
+  }, 3000);
+});
+
+window.addEventListener('appinstalled', () => {
+  _deferredInstall = null;
+  toast('NEXUS installed!', 'Find it on your home screen.', '✓');
 });
