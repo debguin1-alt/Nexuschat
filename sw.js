@@ -36,20 +36,20 @@ const STORE_PRESENCE     = 'presence';
    NOTE: Relative paths work under any subdirectory (GitHub Pages).
 ────────────────────────────────────────── */
 const PRECACHE_REQUIRED = [
-  'https://debguin1-alt.github.io/Nexuschat/',
-  'https://debguin1-alt.github.io/Nexuschat/style.css',
-  'https://debguin1-alt.github.io/Nexuschat/app.js',
-  'https://debguin1-alt.github.io/Nexuschat/sw-bridge.js',
-  'https://debguin1-alt.github.io/Nexuschat/manifest.json',
-  'https://debguin1-alt.github.io/Nexuschat/config.js',
+  './',
+  './style.css',
+  './app.js',
+  './sw-bridge.js',
+  './manifest.json',
+  './config.js',
 ];
 
 const PRECACHE_OPTIONAL = [
-  'https://debguin1-alt.github.io/Nexuschat/offline.html',
-  'https://debguin1-alt.github.io/Nexuschat/icons/icon-192.png',
-  'https://debguin1-alt.github.io/Nexuschat/icons/icon-512.png',
-  'https://debguin1-alt.github.io/Nexuschat/icons/icon-maskable-192.png',
-  'https://debguin1-alt.github.io/Nexuschat/icons/icon-maskable-512.png',
+  './offline.html',
+  './icons/icon-192.png',
+  './icons/icon-512.png',
+  './icons/icon-maskable-192.png',
+  './icons/icon-maskable-512.png',
 ];
 
 /* ──────────────────────────────────────────
