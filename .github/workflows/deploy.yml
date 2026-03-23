@@ -54,7 +54,7 @@ jobs:
         run: |
           mkdir -p /tmp/site/icons
           cp -r icons/* /tmp/site/icons/
-          cp app.js index.html style.css sw.js sw-bridge.js manifest.json offline.html config.js config.example.js /tmp/site/
+          cp *.html *.js *.css *.json /tmp/site/ 2>/dev/null || true
           echo "=== Full site structure ==="
           find /tmp/site -type f | sort
           echo "=== Icons ==="
@@ -67,3 +67,4 @@ jobs:
           publish_dir: /tmp/site
           publish_branch: gh-pages
           force_orphan: true
+          commit_message: "deploy: update site [skip ci]"
