@@ -3128,7 +3128,7 @@ function playSound(type) {
    TOAST
 ────────────────────────────────────────── */
 function toast(title, msg, icon='◈') {
-  const c = $('toast-container'); if (!c) return;
+  const c = $('toast-container'); if (!c) return null;
   const el = document.createElement('div');
   el.className = 'toast';
   el.innerHTML = `<div class="toast-icon">${esc(icon)}</div>
@@ -3138,6 +3138,7 @@ function toast(title, msg, icon='◈') {
     </div><div class="toast-bar"></div>`;
   el.addEventListener('click', () => rmToast(el));
   c.appendChild(el); setTimeout(() => rmToast(el), 4500);
+  return el;
 }
 function rmToast(el) {
   if (!el.parentNode) return;
@@ -3148,25 +3149,46 @@ function rmToast(el) {
    PWA
 ────────────────────────────────────────── */
 let _deferredInstall = null;
+
+function triggerPWAInstall() {
+  if (!_deferredInstall) {
+    toast('Already installed', 'NEXUS is already on your home screen.', '✓');
+    return;
+  }
+  _deferredInstall.prompt();
+  _deferredInstall.userChoice.then(choice => {
+    if (choice.outcome === 'accepted') {
+      toast('NEXUS installed!', 'Find it on your home screen.', '✓');
+    }
+    _deferredInstall = null;
+    /* Hide install button in settings */
+    const row = $('install-app-row');
+    if (row) row.style.display = 'none';
+  });
+}
+
 window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   _deferredInstall = e;
+  /* Show install button in settings */
+  const row = $('install-app-row');
+  if (row) row.style.display = 'flex';
+  /* Show tap-to-install toast after 3 seconds */
   setTimeout(() => {
-    const t = toast('Install NEXUS', 'Tap here to add it to your home screen.', '⬡');
-    if (t) t.style.cursor = 'pointer';
-    if (t) t.addEventListener('click', () => {
-      if (_deferredInstall) {
-        _deferredInstall.prompt();
-        _deferredInstall.userChoice.then(choice => {
-          if (choice.outcome === 'accepted') toast('NEXUS installed!', 'Find it on your home screen.', '✓');
-          _deferredInstall = null;
-        });
-      }
-    });
+    const t = toast('Install NEXUS', 'Tap to add it to your home screen.', '⬡');
+    if (t) {
+      t.style.cursor = 'pointer';
+      /* Remove default dismiss, replace with install trigger */
+      t.replaceWith(t.cloneNode(true));
+      const fresh = $('toast-container')?.lastElementChild;
+      if (fresh) fresh.addEventListener('click', () => { rmToast(fresh); triggerPWAInstall(); });
+    }
   }, 3000);
 });
 
 window.addEventListener('appinstalled', () => {
   _deferredInstall = null;
+  const row = $('install-app-row');
+  if (row) row.style.display = 'none';
   toast('NEXUS installed!', 'Find it on your home screen.', '✓');
 });

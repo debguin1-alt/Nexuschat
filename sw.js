@@ -41,6 +41,7 @@ const PRECACHE_REQUIRED = [
   './app.js',
   './sw-bridge.js',
   './manifest.json',
+  './config.js',
 ];
 
 // Everything here is silently skipped if missing — icons not committed yet, etc.
