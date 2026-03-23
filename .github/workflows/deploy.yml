@@ -55,17 +55,10 @@ jobs:
             exit 1
           fi
 
-      - name: Copy all files into deploy folder
-        run: |
-          mkdir -p _deploy
-          cp -r . _deploy/
-          ls -la _deploy/
-          echo "--- config.js in deploy folder ---"
-          cat _deploy/config.js
-
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./_deploy
+          publish_dir: .
           publish_branch: gh-pages
+          keep_files: false
