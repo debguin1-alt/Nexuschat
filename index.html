@@ -9,8 +9,13 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="NEXUS" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="manifest" href="https://debguin1-alt.github.io/Nexuschat/manifest.json" />
+  <link rel="icon" type="image/png" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="https://debguin1-alt.github.io/Nexuschat/icons/icon-192.png" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="NEXUS" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet" />
@@ -18,7 +23,12 @@
 </head>
 <body>
 
+<!-- Screenshot protection: dialog backdrop renders on a separate compositor layer
+     that captures as black on most Android screenshot tools -->
+<dialog id="ss-shield" style="display:none"></dialog>
+
 <div id="ripple-container"></div>
+<div id="nx-watermark" aria-hidden="true"></div>
 
 <div id="splash" class="screen active">
   <div class="splash-bg"></div>
@@ -592,6 +602,50 @@
   } else {
     init();
   }
+})();
+</script>
+<script>
+/* ── Screenshot protection ──────────────────────────
+   Opens an invisible <dialog> whose ::backdrop
+   sits on a separate GPU compositor layer that most
+   Android screenshot and screen-record tools
+   capture as solid black.
+   The dialog has pointer-events:none and zero size
+   so it is completely invisible during normal use.
+─────────────────────────────────────────────────── */
+(function initScreenshotShield() {
+  const shield = document.getElementById('ss-shield');
+  if (!shield || typeof shield.showModal !== 'function') return;
+
+  function activateShield() {
+    try {
+      if (!shield.open) shield.showModal();
+    } catch (e) {}
+  }
+
+  function deactivateShield() {
+    try {
+      if (shield.open) shield.close();
+    } catch (e) {}
+  }
+
+  /* Activate immediately — keeps backdrop layer alive at all times */
+  activateShield();
+
+  /* Re-activate if dialog is dismissed by Escape or any other means */
+  shield.addEventListener('cancel', function(e) {
+    e.preventDefault();
+    activateShield();
+  });
+
+  shield.addEventListener('close', function() {
+    activateShield();
+  });
+
+  /* Visibility change — reactivate when app comes back into view */
+  document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') activateShield();
+  });
 })();
 </script>
 </body>
