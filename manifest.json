@@ -2,33 +2,41 @@
   "name": "NEXUS · Private Chat",
   "short_name": "NEXUS",
   "description": "Ultra-secure private room chat. No sign-in. Code-locked rooms. End-to-end encrypted.",
-  "id": "https://debguin1-alt.github.io/Nexuschat/",
-  "start_url": "https://debguin1-alt.github.io/Nexuschat/",
-  "scope": "https://debguin1-alt.github.io/Nexuschat/",
+  "id": "/Nexuschat/",
+  "start_url": "/Nexuschat/",
+  "scope": "/Nexuschat/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "orientation": "portrait-primary",
   "background_color": "#0d1a1a",
   "theme_color": "#0d1a1a",
   "dir": "ltr",
   "lang": "en-US",
   "icons": [
-    { "src": "icons/icon-192.png",          "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png",          "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "/Nexuschat/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/Nexuschat/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/Nexuschat/icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/Nexuschat/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
-  "share_target": {
-    "action": "https://debguin1-alt.github.io/Nexuschat/",
-    "method": "GET",
-    "params": { "title": "title", "text": "text", "url": "url" },
-    "enctype": "application/x-www-form-urlencoded"
-  },
-  "protocol_handlers": [
-    { "protocol": "web+nexus", "url": "https://debguin1-alt.github.io/Nexuschat/?roomCode=%s" }
-  ],
-  "handle_links": "preferred",
-  "launch_handler": { "client_mode": ["navigate-existing", "auto"] },
   "related_applications": [],
   "prefer_related_applications": false,
   "categories": ["communication", "social", "utilities"]

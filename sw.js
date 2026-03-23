@@ -36,21 +36,21 @@ const STORE_PRESENCE     = 'presence';
    NOTE: Relative paths work under any subdirectory (GitHub Pages).
 ────────────────────────────────────────── */
 const PRECACHE_REQUIRED = [
-  './index.html',
-  './style.css',
-  './app.js',
-  './sw-bridge.js',
-  './manifest.json',
-  './config.js',
+  '/Nexuschat/',
+  '/Nexuschat/style.css',
+  '/Nexuschat/app.js',
+  '/Nexuschat/sw-bridge.js',
+  '/Nexuschat/manifest.json',
+  '/Nexuschat/config.js',
 ];
 
 // Everything here is silently skipped if missing — icons not committed yet, etc.
 const PRECACHE_OPTIONAL = [
-  './offline.html',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/icon-maskable-192.png',
-  './icons/icon-maskable-512.png',
+  '/Nexuschat/offline.html',
+  '/Nexuschat/icons/icon-192.png',
+  '/Nexuschat/icons/icon-512.png',
+  '/Nexuschat/icons/icon-maskable-192.png',
+  '/Nexuschat/icons/icon-maskable-512.png',
 ];
 
 /* ──────────────────────────────────────────
