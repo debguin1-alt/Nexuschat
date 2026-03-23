@@ -20,11 +20,11 @@ jobs:
 
       - name: Inject Firebase config from secrets
         env:
-          API_KEY:       ${{ secrets.FIREBASE_API_KEY }}
-          AUTH_DOMAIN:   ${{ secrets.FIREBASE_AUTH_DOMAIN }}
-          PROJECT_ID:    ${{ secrets.FIREBASE_PROJECT_ID }}
-          SENDER_ID:     ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
-          APP_ID:        ${{ secrets.FIREBASE_APP_ID }}
+          API_KEY:     ${{ secrets.FIREBASE_API_KEY }}
+          AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          PROJECT_ID:  ${{ secrets.FIREBASE_PROJECT_ID }}
+          SENDER_ID:   ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          APP_ID:      ${{ secrets.FIREBASE_APP_ID }}
         run: |
           python3 - <<PYEOF
           import os
@@ -43,8 +43,7 @@ jobs:
           )
           with open("config.js", "w") as f:
             f.write(config)
-          print("config.js written successfully")
-          print(f"File size: {len(config)} bytes")
+          print("config.js written — " + str(len(config)) + " bytes")
           PYEOF
 
       - name: Verify config.js exists
@@ -52,13 +51,21 @@ jobs:
           if [ -f config.js ]; then
             echo "✅ config.js exists ($(wc -c < config.js) bytes)"
           else
-            echo "❌ config.js missing — aborting"
+            echo "❌ config.js missing"
             exit 1
           fi
+
+      - name: Copy all files into deploy folder
+        run: |
+          mkdir -p _deploy
+          cp -r . _deploy/
+          ls -la _deploy/
+          echo "--- config.js in deploy folder ---"
+          cat _deploy/config.js
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
+          publish_dir: ./_deploy
           publish_branch: gh-pages
