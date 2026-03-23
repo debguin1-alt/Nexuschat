@@ -14,7 +14,7 @@
 /* ──────────────────────────────────────────
    VERSIONS & CACHE NAMES
 ────────────────────────────────────────── */
-const SW_VERSION      = '1.0.1';
+const SW_VERSION      = '1.0.2';
 const CACHE_SHELL     = `nexus-shell-v${SW_VERSION}`;
 const CACHE_STATIC    = `nexus-static-v${SW_VERSION}`;
 const CACHE_RUNTIME   = `nexus-runtime-v${SW_VERSION}`;
