@@ -1,0 +1,78 @@
+name: Deploy NEXUS to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Inject Firebase config from secrets
+        env:
+          API_KEY:     ${{ secrets.FIREBASE_API_KEY }}
+          AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          PROJECT_ID:  ${{ secrets.FIREBASE_PROJECT_ID }}
+          SENDER_ID:   ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          APP_ID:      ${{ secrets.FIREBASE_APP_ID }}
+        run: |
+          python3 - <<PYEOF
+          import os
+          config = """window.__NX_CONFIG__ = {{
+            apiKey:            "{api_key}",
+            authDomain:        "{auth_domain}",
+            projectId:         "{project_id}",
+            messagingSenderId: "{sender_id}",
+            appId:             "{app_id}"
+          }};""".format(
+            api_key     = os.environ["API_KEY"],
+            auth_domain = os.environ["AUTH_DOMAIN"],
+            project_id  = os.environ["PROJECT_ID"],
+            sender_id   = os.environ["SENDER_ID"],
+            app_id      = os.environ["APP_ID"],
+          )
+          with open("config.js", "w") as f:
+            f.write(config)
+          print("config.js written — " + str(len(config)) + " bytes")
+          PYEOF
+
+      - name: Verify config.js
+        run: |
+          [ -f config.js ] && echo "✅ config.js exists ($(wc -c < config.js) bytes)" || (echo "❌ config.js missing" && exit 1)
+
+      - name: Copy site to staging folder
+        run: |
+          mkdir -p /tmp/site/icons
+
+          # Copy icons
+          cp -r icons/* /tmp/site/icons/
+
+          # Copy all site files explicitly
+          for f in index.html offline.html pwa-check.html app.js sw.js sw-bridge.js config.js style.css manifest.json config.example.js; do
+            [ -f "$f" ] && cp "$f" /tmp/site/ && echo "✅ copied $f" || echo "⚠️ skipped $f (not found)"
+          done
+
+          # Create .nojekyll so GitHub Pages serves all files including _ prefixed ones
+          touch /tmp/site/.nojekyll
+
+          echo "=== Full site structure ==="
+          find /tmp/site -type f | sort
+
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: /tmp/site
+          publish_branch: gh-pages
+          force_orphan: true
+          commit_message: "deploy: update site [skip ci]"
